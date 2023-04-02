@@ -4,10 +4,32 @@ import User from '../models/user.js';
 import Transaction from '../models/transaction.js';
 import Wallet from '../models/wallet.js';
 import mongoose from 'mongoose';
+import Joi from 'joi';
+
+const addmoneySchema = Joi.object({
+  email: Joi.string().email().required(),
+  wallet_password: Joi.string().required(),
+  amount: Joi.number().min(0).required()
+});
+
+
+const sendMoneySchema = Joi.object({
+  user: Joi.string().email().required(),
+  recipientEmail: Joi.string().email().required(),
+  amount: Joi.number().positive().required(),
+  wallet_password: Joi.string().required(),
+});
+
 
 
 export const addmoney = async (req, res) => {
     try {
+        // Validate request body
+        const { error, value } = addmoneySchema.validate(req.body);
+        if (error) {
+          return res.status(400).json({ message: error.details[0].message });
+        }
+
         const { email, wallet_password, amount } = req.body;
         const walletObj = await Wallet.findOne({ email });
         if (!walletObj) {
@@ -27,7 +49,7 @@ export const addmoney = async (req, res) => {
       
         // Add transaction record
         const transaction = new Transaction({
-            user: walletObj.email,
+            senderEmail: walletObj.email,
             amount: amount,
             transactionType: 'deposit',
             status: 'success',
@@ -153,6 +175,11 @@ export const addmoney = async (req, res) => {
 
 export const sendmoney = async (req, res) => {
     try {
+
+      const { error } = sendMoneySchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+      }
       // Extract necessary information from request body
       const { user, recipientEmail, amount, wallet_password } = req.body;
       
