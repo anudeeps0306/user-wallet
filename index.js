@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import authRoutes from './routes/auth.js';
 import walletRoutes from './routes/wallet.js';
 import cookieParser from 'cookie-parser';
+import viewRoutes from './routes/view.js';
 
 const app = express();
 
@@ -21,6 +22,7 @@ mongoose.connect('mongodb://localhost:27017/user-wallet', {
 
 app.use('/auth', authRoutes);
 app.use('/wallet', walletRoutes);
+app.use('/view', viewRoutes);
 
 
 app.listen(3000,() => {
