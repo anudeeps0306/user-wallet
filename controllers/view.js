@@ -1,8 +1,18 @@
 import transaction from "../models/transaction.js";
 import User from "../models/user.js";
 import Wallet from "../models/wallet.js";
+import Joi from 'joi';
+
+const viewAllSchema = Joi.object({
+  user: Joi.string().required(),
+});
 
 export const viewall = async (req, res) => {
+
+    const { error } = viewAllSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
     const userEmail = req.body.user;
     const userTransactions = await transaction.find({
         $or: [{ senderEmail: userEmail }, { recipientEmail: userEmail }]

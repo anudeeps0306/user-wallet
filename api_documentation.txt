@@ -1,0 +1,54 @@
+GET http://localhost:3000/auth/register
+{
+    "email": "anudeep1@gmail.com",
+    "password": "123466",
+    "wallet_password": "121212"
+}
+
+###
+
+GET http://localhost:3000/auth/login
+
+{
+    "email" : "anudeep@gmail.com",
+    "password" : "123456"
+}
+
+###
+
+POST http://localhost:3000/wallet/addmoney
+
+{
+    "email":"anudeep@gmail.com",
+    "wallet_password":"234567",
+    "amount":"120"
+}
+
+###
+
+POST http://localhost:3000/wallet/sendmoney
+
+{
+    "user" : "anudeep@gmail.com",
+    "recipientEmail": "anudeep1@gmail.com",
+    "amount": 10,
+    "wallet_password": "234567" 
+}
+
+###
+
+GET http://localhost:3000/view/passbook
+
+{
+    "user":"anudeep@gmail.com"
+}
+
+###
+
+http://localhost:3000/view/getallusers
+
+{
+    "user":"anudeep@gmail.com"
+}
+
+

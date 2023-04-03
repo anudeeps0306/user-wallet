@@ -4,9 +4,26 @@ import User from '../models/user.js';
 import Wallet from '../models/wallet.js';
 import crypto from 'crypto';
 import validator from 'validator';
+import Joi from 'joi';
+
+const registerSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+  wallet_password: Joi.string().min(6).max(6).required(),
+});
+
+// Joi schema for user login
+const loginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+});
 
 export const register = async (req, res) => {
     try {
+        const { error } = registerSchema.validate(req.body);
+        if (error) {
+          return res.status(400).json({ message: error.details[0].message });
+        }
         const { email, password,wallet_password } = req.body;
         console.log(req.body);
         const existingUser = await User.findOne({ email });
@@ -51,6 +68,10 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
+      const { error } = loginSchema.validate(req.body);
+        if (error) {
+          return res.status(400).json({ message: error.details[0].message });
+      }
       const { email, password } = req.body;
       const user = await User.findOne({ email }).populate('wallet');
       if (!user) {
